@@ -3,7 +3,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.8.0",
@@ -18,11 +22,10 @@
     "typescript": "latest"
   },
   "devDependencies": {
-    "prisma": "^7.8.0"
-  }, 
+    "prisma": "^7.8.0",
+    "tsx": "^4.20.3"
+  },
   "prisma": {
-  "seed": "tsx prisma/seed.ts"
-}
-
-  
+    "seed": "tsx prisma/seed.ts"
+  }
 }
