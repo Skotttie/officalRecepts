@@ -2,6 +2,9 @@
 
 import { deletePost, updatePost } from "../../app/actions";
 import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UpdatePostSchema, type UpdatePostInput } from "../schemas/post";
 
 type Comment = {
   id: number;
@@ -40,15 +43,19 @@ export default function PostList({ posts }: PostListProps) {
 
 function PostCard({ post }: { post: Post }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState(post.title);
-  const [content, setContent] = useState(post.content);
   const [isPending, startTransition] = useTransition();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UpdatePostInput>({
+    resolver: zodResolver(UpdatePostSchema),
+    defaultValues: { title: post.title, content: post.content },
+  });
 
-  function handleUpdate(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
+  function onUpdate(data: UpdatePostInput) {
     startTransition(async () => {
-      await updatePost(post.id, title, content);
+      await updatePost(post.id, data);
       setIsEditing(false);
     });
   }
@@ -62,19 +69,13 @@ function PostCard({ post }: { post: Post }) {
   return (
     <article className="post-card">
       {isEditing ? (
-        <form onSubmit={handleUpdate} className="post-edit-form">
-          <input
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            className="text-input"
-            required
-          />
-          <textarea
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
-            className="textarea-input"
-            required
-          />
+        <form onSubmit={handleSubmit(onUpdate)} className="post-edit-form">
+          <input {...register("title")} className="text-input" />
+          {errors.title && <p className="form-error">{errors.title.message}</p>}
+
+          <textarea {...register("content")} className="textarea-input" />
+          {errors.content && <p className="form-error">{errors.content.message}</p>}
+
           <div className="button-row">
             <button type="submit" className="primary-button" disabled={isPending}>
               {isPending ? "Speichert..." : "Speichern"}

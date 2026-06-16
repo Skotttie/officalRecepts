@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "../src/lib/prisma";
+import { CreatePostSchema, UpdatePostSchema, type CreatePostInput, type UpdatePostInput } from "../src/schemas/post";
 
 export async function getPosts() {
   return prisma.post.findMany({
@@ -17,7 +18,10 @@ export async function getPost(id: number) {
   });
 }
 
-export async function createPost(title: string, content: string) {
+export async function createPost(input: CreatePostInput) {
+  // Validierung zur Laufzeit, unabhängig von der Client-seitigen Prüfung.
+  const { title, content } = CreatePostSchema.parse(input);
+
   await prisma.post.create({
     data: {
       title,
@@ -29,7 +33,9 @@ export async function createPost(title: string, content: string) {
   revalidatePath("/posts");
 }
 
-export async function updatePost(id: number, title: string, content: string) {
+export async function updatePost(id: number, input: UpdatePostInput) {
+  const { title, content } = UpdatePostSchema.parse(input);
+
   await prisma.post.update({
     where: { id },
     data: { title, content },
