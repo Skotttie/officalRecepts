@@ -45,3 +45,16 @@ export async function deletePost(id: number) {
 
   revalidatePath("/posts");
 }
+
+// Mock-Checkout: simuliert eine Bestellung ohne echte Zahlungsabwicklung
+// oder Datenbank-Speicherung. Dient als Platzhalter, bis ein echter
+// Checkout-Flow (Zahlung, Order-Tabelle) angebunden wird.
+export async function mockCheckout(itemCount: number) {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  return {
+    success: true,
+    orderId: Math.floor(Math.random() * 1_000_000),
+    itemCount,
+  };
+}
