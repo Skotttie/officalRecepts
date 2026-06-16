@@ -1,6 +1,6 @@
 "use client";
 
-import { deletePost, updatePost } from "../../app/actions";
+import { deletePost, updatePost, toggleLike } from "../../app/actions";
 import { useState, useTransition } from "react";
 
 type Comment = {
@@ -15,6 +15,8 @@ type Post = {
   title: string;
   content: string;
   published: boolean;
+  author?: string | null;
+  likes: number;
   createdAt: Date;
   updatedAt: Date;
   comments: Comment[];
@@ -22,9 +24,10 @@ type Post = {
 
 type PostListProps = {
   posts: Post[];
+  currentUser: string;
 };
 
-export default function PostList({ posts }: PostListProps) {
+export default function PostList({ posts, currentUser }: PostListProps) {
   if (posts.length === 0) {
     return <p className="empty-state">Noch keine Blog-Beiträge vorhanden.</p>;
   }
@@ -32,13 +35,13 @@ export default function PostList({ posts }: PostListProps) {
   return (
     <section className="posts-list" aria-label="Blog-Beiträge">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} currentUser={currentUser} />
       ))}
     </section>
   );
 }
 
-function PostCard({ post }: { post: Post }) {
+function PostCard({ post, currentUser }: { post: Post; currentUser: string }) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
@@ -55,9 +58,17 @@ function PostCard({ post }: { post: Post }) {
 
   function handleDelete() {
     startTransition(async () => {
-      await deletePost(post.id);
+      await deletePost(post.id, currentUser);
     });
   }
+
+  function handleLike() {
+    startTransition(async () => {
+      await toggleLike(post.id);
+    });
+  }
+
+  const isOwner = post.author === currentUser;
 
   return (
     <article className="post-card">
@@ -91,7 +102,15 @@ function PostCard({ post }: { post: Post }) {
             <span>{post.published ? "Veröffentlicht" : "Entwurf"}</span>
           </div>
           <p>{post.content}</p>
-          <small>Erstellt am {post.createdAt.toLocaleDateString("de-DE")}</small>
+          <small>
+            Erstellt am {post.createdAt.toLocaleDateString("de-DE")} von {post.author || "Unbekannt"}
+          </small>
+
+          <div className="likes-section">
+            <button type="button" className="like-button" onClick={handleLike} disabled={isPending}>
+              👍 {post.likes}
+            </button>
+          </div>
 
           {post.comments.length > 0 ? (
             <div className="comments-box">
@@ -107,12 +126,16 @@ function PostCard({ post }: { post: Post }) {
           ) : null}
 
           <div className="button-row">
-            <button type="button" className="secondary-button" onClick={() => setIsEditing(true)}>
-              Bearbeiten
-            </button>
-            <button type="button" className="danger-button" onClick={handleDelete} disabled={isPending}>
-              {isPending ? "Löscht..." : "Löschen"}
-            </button>
+            {isOwner && (
+              <>
+                <button type="button" className="secondary-button" onClick={() => setIsEditing(true)}>
+                  Bearbeiten
+                </button>
+                <button type="button" className="danger-button" onClick={handleDelete} disabled={isPending}>
+                  {isPending ? "Löscht..." : "Löschen"}
+                </button>
+              </>
+            )}
           </div>
         </>
       )}

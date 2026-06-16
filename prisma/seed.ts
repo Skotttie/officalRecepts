@@ -5,12 +5,14 @@ async function main() {
   await prisma.comment.deleteMany();
   await prisma.post.deleteMany();
 
-  // Testdaten einfügen
+// Testdaten einfügen
   const post1 = await prisma.post.create({
     data: {
       title: "Mein erster Blogpost",
       content: "Willkommen auf meinem Blog!",
       published: true,
+      author: "Admin",
+      likes: 5,
       comments: {
         create: [
           { text: "Toller Beitrag!", author: "Alice" },
@@ -25,6 +27,8 @@ async function main() {
       title: "TypeScript ist großartig",
       content: "Warum TypeScript das Leben leichter macht...",
       published: true,
+      author: "Admin",
+      likes: 3,
     },
   });
 

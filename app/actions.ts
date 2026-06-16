@@ -17,12 +17,13 @@ export async function getPost(id: number) {
   });
 }
 
-export async function createPost(title: string, content: string) {
+export async function createPost(title: string, content: string, author: string) {
   await prisma.post.create({
     data: {
       title,
       content,
       published: true,
+      author,
     },
   });
 
@@ -38,10 +39,25 @@ export async function updatePost(id: number, title: string, content: string) {
   revalidatePath("/posts");
 }
 
-export async function deletePost(id: number) {
-  await prisma.post.delete({
+export async function deletePost(id: number, author: string) {
+  const post = await prisma.post.findUnique({
     where: { id },
   });
 
+  if (post && post.author === author) {
+    await prisma.post.delete({
+      where: { id },
+    });
+    revalidatePath("/posts");
+    return true;
+  }
+  return false;
+}
+
+export async function toggleLike(id: number) {
+  await prisma.post.update({
+    where: { id },
+    data: { likes: { increment: 1 } },
+  });
   revalidatePath("/posts");
 }

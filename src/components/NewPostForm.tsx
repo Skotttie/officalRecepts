@@ -1,9 +1,9 @@
 "use client";
 
 import { createPost } from "../../app/actions";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 
-export default function NewPostForm() {
+export default function NewPostForm({ author }: { author: string }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -12,7 +12,7 @@ export default function NewPostForm() {
     event.preventDefault();
 
     startTransition(async () => {
-      await createPost(title, content);
+      await createPost(title, content, author || "Anonym");
       setTitle("");
       setContent("");
     });
@@ -20,7 +20,7 @@ export default function NewPostForm() {
 
   return (
     <form onSubmit={handleSubmit} className="post-form" aria-label="Neuen Blog-Beitrag erstellen">
-      <h2>Neuen Beitrag erstellen</h2>
+      <h2>Neuen Beitrag erstellen {author && `als ${author}`}</h2>
       <input
         value={title}
         onChange={(event) => setTitle(event.target.value)}

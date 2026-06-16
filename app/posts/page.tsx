@@ -1,6 +1,5 @@
 import { getPosts } from "../actions";
-import NewPostForm from "../../src/components/NewPostForm";
-import PostList from "../../src/components/PostList";
+import Forum from "../../src/components/Forum";
 
 export default async function PostsPage() {
   const posts = await getPosts();
@@ -11,8 +10,7 @@ export default async function PostsPage() {
       <p className="server-note">
         Server Component: Diese Seite lädt Blog-Beiträge direkt über Server Actions aus der SQLite-Datenbank.
       </p>
-      <NewPostForm />
-      <PostList posts={posts} />
+      <Forum posts={posts} />
     </main>
   );
 }
