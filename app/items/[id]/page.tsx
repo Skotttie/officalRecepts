@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import AddToCartButton from '../../../src/components/AddToCartButton';
 
 type Item = {
   id: number;
@@ -81,6 +82,17 @@ export default async function ItemDetailPage({ params }: Props) {
         <p><strong>Küche:</strong> {item.cuisine}</p>
         <p><strong>Zubereitungszeit:</strong> {item.prepTime} Minuten</p>
         <p>{item.description}</p>
+
+        <div className="button-row">
+          <AddToCartButton
+            item={{
+              id: item.id,
+              title: item.title,
+              cuisine: item.cuisine,
+              prepTime: item.prepTime,
+            }}
+          />
+        </div>
       </article>
 
       <Link href="/items" className="back-link">
