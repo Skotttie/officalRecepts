@@ -1,7 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// DATABASE_URL is read from prisma.config.ts, so secrets stay in .env.local
+// locally and in the Vercel Environment Variables in production.
 
 generator client {
   provider = "prisma-client"
@@ -9,7 +10,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model User {

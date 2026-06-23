@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '../src/context/CartContext';
 import CartNavLink from '../src/components/CartNavLink';
 
+const inter = Inter({ subsets: ['latin'] });
+
 export const metadata: Metadata = {
-  title: 'Next.js App',
-  description: 'Simple placeholder app',
+  title: 'Official Recepts',
+  description: 'Rezept- und Blog-App mit Next.js',
 };
 
 export default function RootLayout({
@@ -16,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de">
-      <body>
+      <body className={inter.className}>
         <CartProvider>
           <nav className="site-nav">
             <div className="nav-inner">

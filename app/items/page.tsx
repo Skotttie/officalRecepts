@@ -1,48 +1,7 @@
 import SearchableItems from "../../src/components/SearchableItems";
+import { getItems } from "../../src/lib/items";
 
-type Item = {
-  id: number;
-  title: string;
-  cuisine: string;
-  prepTime: number;
-};
-
-// Diese Funktion läuft nur auf dem Server.
-async function getItems(): Promise<Item[]> {
-  // Platzhalterdaten, bis eine echte API oder Datenbank angebunden ist.
-  return [
-    {
-      id: 1,
-      title: 'Pasta mit Tomatensauce',
-      cuisine: 'Italienisch',
-      prepTime: 25,
-    },
-    {
-      id: 2,
-      title: 'Gemüse-Curry',
-      cuisine: 'Indisch',
-      prepTime: 35,
-    },
-    {
-      id: 3,
-      title: 'Tacos',
-      cuisine: 'Mexikanisch',
-      prepTime: 20,
-    },
-    {
-      id: 4,
-      title: 'Sushi Bowl',
-      cuisine: 'Japanisch',
-      prepTime: 30,
-    },
-    {
-      id: 5,
-      title: 'Falafel Wrap',
-      cuisine: 'Orientalisch',
-      prepTime: 15,
-    },
-  ];
-}
+export const revalidate = 3600;
 
 export default async function ItemsPage() {
   const items = await getItems();
